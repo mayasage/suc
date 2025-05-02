@@ -1,0 +1,884 @@
+Git Concepts
+
+
+.gitignore
+  Rules
+    - todo => ignore any todo
+    - /todo => ignore only todo in root
+    - build/ => build is a dir; ignore any file within
+    - *.a => ignore any file that ends with a
+      !lib.a => but don't ignore lib.a
+    - ** => match nested dirs
+      a/**/z => match a/z, a/b/z, a/b/c/z...
+    - doc/**/*.pdf => ignore any .pdf in doc or sub-dirs
+
+
+$ git difftool
+  => use external diff tool
+  --tool-help
+    => See what's available on your system.
+
+
+$ git status
+  -s or --short
+  output
+    LHS => status of the staging area
+    RHS => status of the working tree
+    M   => modified files
+    MM  => modified, staged, and then modified again
+    A   => new files that have been added to staging
+    ??  => new files not being tracked
+
+
+Moving Files
+  $ git mv <file_from> <file_to>
+    => $ mv README.md README
+       $ git rm README.md
+       $ git add README
+
+
+Removing Files
+  => remove it from staging and commit.
+     1. $ rm file => will appear as unstaged
+     2. $ git rm => removes from git
+        $ git rm -f => if modified
+	$ git rm --cached <file> => stop tracking, but keep
+	$ git rm log/\*.log => rm all .log files in log/
+     3. commit
+
+
+Blob
+  - Git reuses Blob with same content.
+  - If Content is same then SHA-1 will be too.
+
+
+Cherry Picking!
+  => Take any commit & insert it.
+     1. $ git checkout branch
+     2. $ git cherry-pick SHA1
+     OPTIONS
+       --no-commit => just apply
+  => See changes:
+       $ git status -v
+       $ git show SHA1
+
+
+Clear cached github credentials
+  $ git config credential.helper ""
+
+
+Different Users
+  $ git config user.name "utest1649"
+  $ git config user.email "utest1649@gmail.com"
+    Sets for current repository.
+
+
+Discard changes
+  Before Git 2.23
+    For all
+      $ git checkout -- .
+    For specific
+      $ git checkout -- <file>
+  Git 2.23 onwards
+    For all
+      $ git restore .
+    For specifc
+      $ git restore <file>
+
+
+Fork
+  1. $ git remote add upstream <parent-repo-url>
+       url = https://github.com/bstashchuk/JavaScript-Bible-ES6.git
+  2. $ git remote -v
+       origin	https://github.com/utest4401/JavaScript-Bible-ES6.git (fetch)
+       origin	https://github.com/utest4401/JavaScript-Bible-ES6.git (push)
+       upstream https://github.com/bstashchuk/JavaScript-Bible-ES6.git (fetch)
+       upstream https://github.com/bstashchuk/JavaScript-Bible-ES6.git (push)
+  3. Fetch from upstream
+       3.1. $ git fetch upstream -v
+       3.2. $ git pull upstream master
+       3.3. $ git merge upstream/master -v
+
+
+Garbage Collection
+  => By default, unreachable Git objects are garbage collected after 30 days.
+  => Not just deletes obsolete info, but also packs up in pack files
+  USE
+    If you wanna make temporary changes, checkout SHA-1, make changes, try out.
+    If you wanna keep those changes, create a new branch, merge 'em up.
+    Else, just change branch, and they'll be garbage collected.
+  => Run Garbage Collection from Terminal
+       $ git gc
+
+
+gh-pages
+  => npm package
+  => used to build apps for github pages
+  => uses branch "gh-pages"
+  PROCESS
+    1. npm i -D gh-pages
+    2. Add 2 new scripts to package.json.
+         "predeploy": "npm run build",
+         "deploy": "gh-pages -d build"
+    3. Add to package.json below name, version and private:
+         "homepage": "<repo-https-url>"
+           => value will be equal to the URL of the remote github page
+  ERRORS
+    fatal: A branch named 'gh-pages' already exists.
+      $ rm -rf node_modules/gh-pages/.cache
+        OR
+      $ rm -rf node_modules/.cache/gh-pages/
+
+
+Basic Git Commands
+  Local
+    $ git status
+    $ git add => Working -> Staging
+    $ git rm --cached <file> => Working <- Staging
+      --cached => Unstage specific file
+    $ git commit
+    $ git log
+      History of changes (commits)
+        $ git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+    $ git checkout
+    $ git show SHA1 => see changes
+    $ git branch => see local branches
+      -a => also see remote branches
+      -r => see remote branches
+      -vv => verbose
+      => main is the default branch.
+    $ git remote prune origin => Remove stale remote branches from local.
+    $ git config
+      $ cat .git/config shows beautified output
+    $ git remote update origin --prune
+      Tells local that a remote branch was deleted.
+        * temp 08d2cbe [origin/temp: gone] Another change in feature-2 branch
+    $ git branch -d <branch> => delete branch from local.
+    $ git push origin -d <branch> => Delete remote branch from terminal.
+    $ git show-ref => show all refs
+    $ git show-ref <branch>
+  Remote
+    $ git pull = git fetch + git merge
+        -r
+	  avoid merge commits
+    $ git push --set-upstream origin feature-2
+    $ git push -u origin feature-2
+      origin => server
+      feature-2 => branch
+    $ git fetch
+      => A branch is just text file in the .git/refs/heads.
+      => On git fetch, remote branches will be created locally.
+      => Absolutely non-destructive.
+      => Also creates remote commits, blobs and trees in local.
+      => Makes merging possible without remote.
+      => New branch won't be created locally until git checkout.
+    $ git clone
+      => Git won't create all remote branches locally.
+         Git will only create default remote branch.
+    $ git remote => show remote branch
+      -v => Show URLs.
+    $ git remote show origin => show details
+
+
+Branch
+  => Stored in .git/refs/heads
+  => Change with git checkout <branch>
+  => Branch is a wrapper around commit.
+  Git branches management
+    $ git branch  =>  List local branches
+    $ git branch <name>  =>  Create branch
+    $ git checkout <name>  =>  Checkout branch
+    $ git branch -d <name>  =>  Delete merged branch
+    $ git branch -D <name>  =>  Delete non-merged branch
+    $ git branch -m <old> <new>  =>  Rename branch
+    $ git checkout -b <name>  =>  Create & checkout branch
+
+
+$ git cat-file <hash>
+  -p = Content
+  -s = Size
+  -t = Type
+
+
+Git Commit
+  STRUCTURE
+    <hash> Commit
+    Author name and email
+    Commit description
+    Parent
+  => Commit contains a pointer to a Tree.
+  => Commit is just a wrapper arount a Tree Object.
+  => Root commit points to a Commit.
+  $ git commit -m "Our very first commit in the project"
+  [master (root-commit) 8649fa5] Our very first commit in the project
+   2 files changed, 2 insertions(+)
+   create mode 100644 file1.txt
+   create mode 100644 file2.txt
+     master => branch
+     root-commit => first commit (no parent commit)
+     8649fa5 => part of hash
+     Our very first commit in the project => commit message
+  $ git commit -m <msg> -a
+    -a => Automatically Stage Working Directory.
+  $ git cat-file -p 8649
+      tree 3b95df0ac6365c72e9b0ff6c449645c87e6e1159
+      author Mayank Tiwari <mayank.tiwari@kratikal.com> 1674305338 +0530
+      committer Mayank Tiwari <mayank.tiwari@kratikal.com> 1674305338 +0530
+      Our very first commit in the project
+        tree <hash> => pointer to the Tree Object
+	author => writes changes
+	committer => commit changes
+	1674305338 => UNIX time
+	+0530 => timezone
+  $ git ammend
+    => Adjust information in last commit.
+    => Git creates a new commit, the previous one, garbage collected.
+  $ git commit --amend --author="name<email>" => change author
+  OPTIONS
+    -m "<msg>" => Change message
+
+
+$ git config --global user.name <Name>
+$ git config -- global user.email <Email>
+$ git config --list
+
+
+$ git hash-object
+  $ echo "Hello, Git" | git hash-object --stdin -w
+    b7aec520dec0a7516c18eb4c68b64ae1eb9b5a5e
+  OPTIONS
+    -w => creates a git Object
+    --stdin => from input stream
+  CHECK
+    .git/objects/[b7]/[aec520dec0a7516c18eb4c68b64ae1eb9b5a5e]
+
+
+Git Hooks
+  => git creates sample hooks on init, but disable them by default
+  => you can enable/disable any hook
+  => scripts to run on git events
+  => scripts can be in any interpreted language
+     (node, perl, python, bash... any interpreter)
+  => local git hooks are not pushed to remote
+  TYPES
+    Pre-commit Hook
+      => Perform actions before starting commit.
+      => Only commit if process exits successfully
+         (process exit status = 0)
+    Prepare commit message Hook
+      => Runs before editor opens.
+      => You can adjust editor prompt.
+      => If successful (status = 0), opens up the editor.
+    Commit-message Hook
+      => To verify commit message, usually.
+      => If successful (status = 0), commit completes.
+    Post-commit Hook
+      => Used for notifications, usually.
+      => Status code doesn't matter.
+  * You can use client or server side hooks.
+  * There are more hooks.
+  Examples of server-side Git Hooks
+    pre-receive
+    update
+    post-receive
+  USAGE EXAMPLE
+    - verify or edit commit message
+    - run tests
+    - use linters like ESLint, Pylint
+    - generate notifications after commit
+    - deploy updated app to prod
+
+
+Enable git hooks
+  $ ls -la .git/hooks/
+  total 60
+  drwxrwxr-x 2 kratikal kratikal 4096 Feb  3 23:00 .
+  drwxrwxr-x 7 kratikal kratikal 4096 Feb  3 23:00 ..
+  -rwxrwxr-x 1 kratikal kratikal  478 Feb  3 23:00 applypatch-msg.sample
+  -rwxrwxr-x 1 kratikal kratikal  896 Feb  3 23:00 commit-msg.sample
+  -rwxrwxr-x 1 kratikal kratikal 3079 Feb  3 23:00 fsmonitor-watchman.sample
+  -rwxrwxr-x 1 kratikal kratikal  189 Feb  3 23:00 post-update.sample
+  -rwxrwxr-x 1 kratikal kratikal  424 Feb  3 23:00 pre-applypatch.sample
+  -rwxrwxr-x 1 kratikal kratikal 1638 Feb  3 23:00 pre-commit.sample
+  -rwxrwxr-x 1 kratikal kratikal  416 Feb  3 23:00 pre-merge-commit.sample
+  -rwxrwxr-x 1 kratikal kratikal 1492 Feb  3 23:00 prepare-commit-msg.sample
+  -rwxrwxr-x 1 kratikal kratikal 1348 Feb  3 23:00 pre-push.sample
+  -rwxrwxr-x 1 kratikal kratikal 4898 Feb  3 23:00 pre-rebase.sample
+  -rwxrwxr-x 1 kratikal kratikal  544 Feb  3 23:00 pre-receive.sample
+  -rwxrwxr-x 1 kratikal kratikal 3610 Feb  3 23:00 update.sample
+  => Git disable hooks by adding .sample.
+  => Remove it to enable hook.
+  => Also make sure to set execute permissions.
+       $ chmod +x post-commit
+
+
+Setup custom domain for GitHub Pages
+  1. Got to GitHub > Repo > Repo Settings
+  2. Enter Custom domain & save.
+       gh-pages.stashchuk.com
+  3. Modify DNS settings for Domain.
+       3.1. Cloudflare DNS settings
+       3.2. Add new CNAME record:
+       	      name: gh-pages
+	      target: mikegithubber.github.io
+	      Result: gh-pages.stashcuk.com is an alias of
+	              mikegithubber.github.io
+  4. Modify Code
+       package.json
+         Change "homepage" from
+	   "https://mikegithubber.github.io/gh-pages-react/"
+	 to
+	   "https://mikegithubber.github.io/"
+	   <same as github page url>
+  5. Save, Commit, Push, Deploy.
+  6. Custom domain will have reseted.
+     Re-enter domain & save.
+       gh-pages.stashchuk.com
+  * Each time you push, you'll have to setup custom domain.
+
+
+Github Pages Built-in Markdown
+  The automatic page generator shown in the video has deprecated.
+  Theme Chooser has deprecated too.
+
+
+$ git log
+  Create an alias
+    $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit"
+  OPTIONS
+    --oneline => commit fits in 1 line
+    --graph => also shows graph
+    --stat => show quantity of commit
+    -p => see changes in every file
+    -4 => see last 4 commits
+    --author="AchillesJ"
+      => see commits made by this author
+      => this is regex
+    --grep="3.2.1"
+      => commits with this string in message or description
+    --pretty=format:"%H"
+    --pretty=format:"%cn %H"
+    --pretty=format: "Author of commit: %c Commit SHA1 hash: %h"
+      cn => commiter name
+      H => full SHA1
+      h => short SHA1
+      cd => commit date
+    --merge => see only merge commits
+    --no-merges => see only non-merge commits
+  => This command is given to Git DB.
+       %X => variable
+       It replaces %X.
+
+
+$ git shortlog
+  => summary of commits
+  => sorted by author's name by default
+  OPTIONS
+    -n => sort by number of commits
+    -s => just see summary
+    -e => see email
+
+
+Git Low-Level Commands
+  $ git hash-object => create new blob object
+  $ git mktree => create new tree object
+  $ git cat-file => read git object
+  $ git ls-files -s => see staging area
+  $ git read-tree <hash> => Repo -> Staging
+  $ git checkout-index -a => Staging -> Working
+
+
+$ git ls-files -s
+100644 b7aec520dec0a7516c18eb4c68b64ae1eb9b5a5e 0 file1.txt
+100644 4400aae52a27341314f423095846b1f215a7cf08 0 file2.txt
+  0 => (Repo = Staging)
+
+
+Merge
+  => Fast Forward Merge
+       - Move master to the first commit of feature branch.
+       - Only if no conflicting commits in master.
+           master => Receiving branch
+	     1. Checkout master.
+	     2. git merge <feature-branch>
+  => 3-Way Merge
+       - When there are conflicting commits.
+       - Ancestor => Nearest common commit for both branches.
+       - Create a new commit that has 2 parents, master & feature.
+         It will merge both branches, starting from Ancestor.
+      	 Move master to the new commit.
+  => Merge Conflicts
+       - Editing same files in both branches.
+       - Only possible in 3-Way Merge.
+  => Abort git merge
+       $ git merge --abort
+
+
+$ git mktree
+  $ cat ../temp-tree.txt | git mktree
+  3b95df0ac6365c72e9b0ff6c449645c87e6e1159
+  TEST
+    $ find .git/objects/ -type f
+    .git/objects/3b/95df0ac6365c72e9b0ff6c449645c87e6e1159
+
+
+Git Object Types (4)
+  Blob => store all files
+  Tree => store hierarchy
+  Commit => store different versions of our project
+  Annotated Tag => persistent text pointer to specific commit
+
+
+$ git pull
+  1. Upload & Compare
+     - The local changes of the branch is uploaded to Git.
+     - Git compare changes.
+         POST git-upload-pack (277 bytes)
+	 remote: Enumerating objects: 6, done.
+	 remote: Counting objects: 100% (6/6), done.
+	 remote: Compressing objects: 100% (4/4), done.
+	 remote: Total 4 (delta 0), reused 0 (delta 0), pack-reused 0
+	 Unpacking objects: 100% (4/4), 831 bytes | 831.00 KiB/s, done.
+  2. $ git fetch
+     - Add remote branch names to local.
+         From https://github.com/utest4401/my-first-github-repository
+	 f6d61cd..30a9889  feature-1  -> origin/feature-1
+	 = [up to date]      main       -> origin/main
+     - Updates .git/FETCH_HEAD.
+         <SHA1>  branch 'feature-1' of <URL>
+       	 <SHA1>  not-for-merge  branch 'master' of <URL>
+     * The first line is the currently checked out branch.
+  3. $ git merge FETCH_HEAD
+     - Merges the first non-not-for-merge branch in .git/FETCH_HEAD.
+         Updating f6d61cd..30a9889
+	 Fast-forward
+	 feature/another-file.txt | 1 +
+	 1 file changed, 1 insertion(+)
+	 create mode 100644 feature/another-file.txt
+
+
+$ git reflog
+  => see entire history of all operations
+  => locally made changes only
+  => move to before-reset position
+  => stored for 90 days by default
+  $ git reflog show temp
+    => see operations performed on temp
+
+
+$ git reset
+  (Delete commits till...)
+  (Reset last commit to any older commit in history)
+  OPTIONS
+    --soft
+      => discard commits
+      => keep staging area
+      => keep working directory
+    --mixed (default)
+      => discard commits
+      => discard staging area
+      => keep working directory
+    --hard
+      => discard commits
+      => discard staging area
+      => discard working directory
+  $ git reset HEAD~5 => first 5 commits in git log goes
+
+
+$ git restore --staged <file> => unstage specific file
+
+
+$ git revert
+  => not destructive
+  => doesn't modify git history
+  => reverts specific single commit, by inverting its changes in a new commit.
+  $ git revert HEAD => revert last commit (since HEAD will be pointing to it)
+  MERGE CONFLICTS
+    => There can be merge conflicts.
+       Solve them normally, save file.
+       $ git add .
+       $ git revert --continue
+
+
+$ git stash => stash current
+  => save changes & retrieve them later
+  => .git/refs/stash
+     contains refs to stashes
+  $ git stash pop => remove from stash too
+  $ git stash apply => do not remove from stash
+  $ git stash save "Latest changes in bug-dept-page" => save with message
+
+
+File tracking statuses
+  Untracked
+  Modified
+  Staged
+  Unmodified
+
+
+Git Tree Objects
+  - 100644 blob <hash>  .babelrc
+    100644 blob <hash>  .flowconfig
+    040000 tree <hash>  dist
+    100644 blob <hash>  package.json
+    040000 tree <hash>  src
+    100644 blob <hash>  yarn-error.log
+    100644 blob <hash>  yarn.lock
+      <permission><SPACE><type><SPACE><hash><TAB><filename>
+  - Git Objects Permissions
+      040000  Directory
+      100644  Regular non-executable file
+      100664  Regular non-executable group-writeable file
+      100755  Regular executable file
+      120000  Symbolic link
+      160000  Gitlink
+  => Tree contains pointers to Blobs & Trees.
+  => Tree is the Root directory.
+  => Commit points to Tree.
+
+
+HEAD
+  - HEAD is local.
+  - HEAD points to the currently checked-out branch or commit.
+  - Pointer's located at .git/HEAD file.
+  - Default pointer is ref: refs/heads/master.
+  - $ git checkout <branch>
+    $ git checkout <sha1>
+  Detached HEAD => A state where HEAD points to a commit instead of a branch.
+
+
+Syntax Check Hook
+  1. npm i -D eslint eslint-plugin-import eslint-config-airbnb-base
+  2. package.json
+       "scripts": {
+         "lint": "eslint src/**"
+       }
+  3. eslint --init
+     ERROR: not found
+       SOLUTION
+         npm i -g eslint
+           or
+	 package.json
+           "scripts": {
+	     "lint-init": "eslint --init"
+	   }
+      	 npm run lint-init
+  4. .eslintrc.js
+       Replace
+         extends: "eslint:recommended"
+       With
+         extends: "airbnb-base"
+       npm run lint ✅
+  5. package.json
+       "husky": {
+         "hooks": {
+           "pre-commit": "npm run lint && npm test"
+	 }
+       }
+  6. Setup fixing of errors (Must run script manually)
+       package.json
+         "scripts": {
+           "lint-fix": "eslint src/** --fix"
+         }
+   Warnings for console.logs will appear.
+   They will not be removed.
+   However, warnings don't stop the commit.
+
+
+Merge Conflict
+  $ git ls-files -s
+  100644 799ebce00b0535546155ce74e287ff86e0355371 1 README.md
+  100644 b2d61da95868dcba146b0d3f4028a9bf0cd74e28 2 README.md
+  100644 a83e26168f2b1abf98531e609d9f85b8d59f5577 3 README.md
+    1 => file in ancestor branch
+    2 => file in receiving branch
+    3 => file in feature branch
+
+
+Origin
+  - How is local repository connected to remote repository?
+      When you clone, git creates a default binding named origin.
+      You can connect local repository with multiple remote repositories.
+  $ git remote => show remote repositories
+  $ git remote -v
+    origin https://github.com/utest4401/my-first-github-repository.git (fetch)
+    origin https://github.com/utest4401/my-first-github-repository.git (push)
+      => URL for fetch/push.
+
+
+Github Pages => To showcase your portfolio.
+  Host React App.
+    1. Create new Repo.
+    2. create-react-app
+    3. Add remote to Git.
+    4. npm i -D gh-pages
+    5. setup gh-pages (check gh-pages.txt)
+    5. deploy
+    6. Go to Github > Repo Settings > Pages
+    7. Select source to "gh-pages"
+    8. Done!
+
+
+Post commit hook
+  package.json
+    "scripts": {
+      "success-message": "echo Thanks for committing $GIT_AUTHOR_NAME"
+    }
+    "husky": {
+      "hooks": {
+        "post-commit": "npm run success-message"
+      }
+    }
+
+
+Pull Request
+  => A proposal of potential changes.
+  => Why "pull"?
+       OPERATIONS
+         pull => local <- remote
+         push => local -> remote
+           pull operation != pull request
+         "Please 'pull' my branch & check it, Alice!"
+       GitHub & Bitbucket => "pull" request
+         =
+       GitLab => "merge" request
+
+
+Rebase
+  => changing the base of a branch from one commit to another
+  => rewrites history
+  => History becomes linear. Every commit will have a single parent.
+  PROCESS
+    1. $ git checkout feature1
+    2. $ git rebase main -v
+         First, rewinding head to replay your work on top of it...
+	 Applying: Third file was created in feature1 branch
+	 Applying: Third file was modified in feature1 branch
+    3. $ git checkout main
+    4. $ git merge feature1
+    5. $ git branch -d feature1
+  Rebase with Squash
+    => Can easily be performed with Github.
+         Create a pull request.
+         Choose option squash and merge while merging.
+    => From Terminal
+         Need to perform interative merging.
+         $ git rebase -i <last commit before creation of feature2 branch>
+         replace pick with squash or s
+
+
+Setup SSH instead of HTTPS
+  1. Go to GitHub.
+  2. Go to Settings.
+  3. Go to SSH and GPG Keys.
+  4. Generate a new SSH key.
+  5. Copy this SSH key.
+  6. Go to GitHub > Settings > SSH & GPG Keys.
+  7. Add New SSH Key.
+
+
+Replace HTTPS with SSH
+  1. Go to Github
+  2. Click code and copy SSH Url.
+  3. Go back to VSCode.
+  4. $ git remote set-url origin <url>
+       => origin = remote server
+
+
+Stop linting and testing everything on commit
+  1. npm i -D lint-staged
+  2. package.json
+       "lint-staged": {
+         "*.js": [
+           "eslint",
+	   "jest --findRelatedTests"
+	 ]
+       }
+     - lint-staged will pass all staged js files as argument to eslint
+     - jest will run tests on staged & related files only
+  3. Replace
+       "husky": {
+         "hooks": {
+	   "pre-commit": "npm run lint && npm test"
+	 }
+       }
+     With
+       "husky": {
+         "hooks": {
+	   "pre-commit": "lint-staged"
+	 }
+       }
+  FINAL CONFIG
+  .eslintrc.json
+    {
+      "env": {
+        "browser": true,
+	"commonjs": true,
+	"es2021": true
+      },
+      "extends": "airbnb-base",
+      "overrides": [],
+      "parserOptions": {
+        "ecmaVersion": "latest"
+      },
+      "ignorePatterns": ["jest.config.js"],
+      "rules": {}
+    }
+  jest.config.js
+    module.exports = {
+      collectCoverage: true,
+      coverageDirectory: "coverage",
+      coverageProvider: "v8",
+      roots: ["."],
+    };
+  .gitignore
+    node_modules
+    coverage
+  package.json
+    {
+      "name": "git-hooks-nodejs",
+      "version": "1.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "jest",
+	"test:staged": "jest --bail --findRelatedTests --passWithNoTests",
+	"lint": "eslint src/**",
+	"lint-init": "eslint --init",
+	"lint-fix": "eslint src/** --fix",
+	"jest-init": "jest --init",
+	"jest:test": "jest --bail --findRelatedTests --passWithNoTests src/otherfile.js",
+      },
+      "keywords": [],
+      "author": "",
+      "license": "ISC",
+      "devDependencies": {
+        "eslint": "^8.33.0",
+	"eslint-config-airbnb-base": "^15.0.0",
+	"eslint-plugin-import": "^2.27.5",
+	"husky": "^4.3.8",
+	"jest": "^29.4.1",
+	"lint-staged": "^13.1.0"
+      },
+      "husky": {
+        "hooks": {
+	  "pre-commit": "lint-staged",
+	}
+      },
+      "lint-staged": {
+        "*.js": [
+          "eslint",
+      	  "npm run test:staged"
+	]
+      }
+    }
+
+
+Sync git hooks => They don't sync.
+  SOLUTION 1
+    1. Commit Hooks in working directory.
+    2. Create Sym Links manually in .git/hooks.
+  SOLUTION 2
+    Use packages or apps to control .git/hooks.
+    Configuration will exist in the working directory.
+    EXAMPLE: NodeJS with Husky or Pre-commit
+    PROCESS
+      1. pre-commit => allows only pre-commit hook
+         1.1. npm install --save-dev pre-commit
+  	 1.2. package.json
+    	        "scripts": {
+      	          "test": "jest"
+    	     	}
+    	     	"pre-commit": [
+      	          "test"
+    	     	]
+    	 	Now "test" will run before committing.
+    	 	If it fails, then commit fails.
+      2. husky => allows multiple hooks
+      	 2.1. <uninstall pre-commit>
+  	 2.2. <remove hooks from .git/hooks if needed>
+  	 2.3. npm install -D husky@4.3.8
+      	 2.4. package.json
+    	        "scripts": {
+		  "test": "jest"
+		},
+         2.5. "husky": {
+      	        "hooks": {
+		  "pre-commit": "npm test"
+		}
+	      }
+Bypass hooks
+  $ git commit -n -m "Adding breaking changes"
+  $ git commit --no-verify -m "Adding breaking changes"
+  => So, one can bypass all hooks & push.
+  => Therefore, you must add hooks to GitHub.
+
+
+Tag
+  $ git tag => list
+  $ git tag v1.0.0 => lightweight tag
+  $ git tag -a v1.0.0 -m "Initial tag" => annotated tag
+  $ git show v1.0.0 => show tag info
+  => $ git push doesn't push tags
+  PUSH TAGS
+    - (All) $ git push --tags
+    - (Single) $ git push -v origin v1.0.1
+  CHECK
+    $ cat .git/refs/tags/v1.0.0
+    76d482705399ad04017d41e7fb5dfa316bc3a89f
+  $ git tag -v v1.0.0
+  (lightweight)
+    error: v1.0.0: cannot verify a non-tag object of type commit.
+  (annotated)
+    object b3c9496f30c7ced70f45ccce772250fd9a17ad2d
+    type commit
+    tag v1.0.0
+    tagger Mayank Tiwari <mayank.tiwari@kratikal.com> 1675007415 +0530
+      Initial tag
+      error: no signature found
+
+
+Tracking branch => Local branch connected to remote branch.
+  => Start tracking branch
+       $ git checkout feature-1
+       (feature-1 exists in remote, not local)
+  => Stop tracking branch
+       $ git checkout master
+       $ git branch -d feature-1
+       warning: deleting branch 'feature-1' that has been merged to
+                'refs/remotes/origin/feature-1', but not yet merged to HEAD.
+       Deleted branch feature-1 (was f6d61cd).
+
+
+Verify commit message
+  EXAMPLE: Add Jira ticket in commit message.
+  1. npm i -D @commitlint/cli
+  2. package.json
+       "husky": {
+         "hooks": {
+	   "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+         }
+       }
+       "commitlint": {
+         "rules": {
+           "references-empty": [
+	     2,
+	     "never"
+	   ]
+         }
+         "parserPreset": {
+           "parserOpts": {
+	     "issuePrefixes": [
+	       "ISSUE-"
+	     ]
+	   }
+         }
+       }
+
+
+$ git mktree
+
+
+Show Current Branch
+  git rev-parse --abbrev-ref HEAD
+  git branch --show-current

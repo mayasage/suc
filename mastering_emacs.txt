@@ -1,0 +1,192 @@
+EMACS - Escape Meta Alt Control Shift (pun)
+
+Start:
+  emacs -nw - Forces Emacs to run in terminal mode.
+  emacs -q - Start Emacs without loading the init file.
+  emacs --daemon - Start Emacs client-server mode as daemon for quick editing.
+  emacsclient - Perform quick editing.
+        -c - Creates a graphical frame.
+        -nw - Creates a terminal frame.
+        -n - The client will return immediately instead of waiting for you to save your changes. Useful if you just want to open a bunch of files.
+
+Kill Emacs:
+  emacsclient -e '(kill-emacs)' - from outside
+  kill-emacs or save-buffers-kill-emacs - from inside
+
+Menu bar:
+      F10 - Access Emacs menu in terminal.
+
+Move:
+      C-p - Move to previous line.
+      C-n - Move to next line.
+      C-f - Move forward 1 char.
+      C-b - Move backward 1 char.
+      M-f - Move forward 1 word.
+      M-b - Move backward 1 word.
+      C-a - Move to the beginning of line.
+      C-e - Move to the end of line.
+      M-a - Move to the beginning of sentence.
+      M-e - Move to the end of sentence.
+      C-v/PageUp - Move forward 1 screen.
+      M-v/PageDown - Move backward 1 screen.
+      C-l - Move screen around the cursor.
+      M-< - Move to the beginning of text.
+      M-> - Move to the end of text.
+
+Repeat:
+      C-u <num> <command>/C-<num>-<p/n/f/b/...> - Repeat <command> <num> times.
+      C-u <num> C-v - Scroll up by <num> lines.
+      C-u <num> M-v - Scroll down by <num> lines.
+
+Stop:
+      C-g - Stop command execution.
+
+Window:
+      C-x 1 - Switch to window 1 & kill all other windows.
+
+Editing:
+      <DEL> - Means backspace (deletes previous character).
+      C-d - Means delete (delete the next character).
+      M-<DEL> - Kill the previous word.
+      M-d - Kill the next word.
+      C-k - 1st time = kills the content of the line; 2nd time = kills the line itself. However...
+      C-u <num> C-k - Simple kills <num> lines along with their newlines.
+      M-k - Kill till end of sentence.
+      C-<SPC> C-w - Kill selected text.
+      C-y - yank most recent kill / also paste from clipboard
+      M-y - After C-y, press M-y to cycle through older kills.
+
+      Killing Vs. Deleting: Killed text can be yanked, deleted can't.
+
+Undo:
+      C-//C-x u/C-_ (some terminals allow omition of shift for _.) - undo
+
+File:
+      C-x C-f - Find a file.
+      C-x C-s - Save the file.
+      C-x b <type buffername when asked>/<find file again> - Change buffers.
+      C-x s - Save some buffers to their files.
+
+Extension:
+      C-x - Character eXtend. Followed by one character.
+      M-x - Named command eXtend. Followed by a long name.
+      C-z - Suspend Emacs temporarily (goes to bg in terminal).
+      fg/%emacs - Resume suspended Emacs.
+
+Recovery:
+      M-x -> recover-this-file <Return> -> yes<Return>
+            Emacs periodically auto-saves the file, and deletes it when the file is saved normally.
+
+Modes:
+      M-x <major-mode-name> <Return> - Switch major mode.
+      M-x <minor-mode-name> <Return> - Enable/disable (toggle) minor mode.
+
+Auto-fill-Margin:
+      C-u <num> C-x f - Set margin to <num>.
+
+Buffers:
+      C-x C-b - List buffers.
+
+Searching:
+      C-s - Initiate forward search. Find next match.
+      C-r - Initiate reverse search.
+      <Return> - Terminates a search.
+      <DEL> - Find previous match. (DEL means backspace.) When there are no previous matches, only then delete the last character in the search string.
+      C-g - Terminate search.
+
+Window:
+      C-x 2 - Splits the screen into 2 windows.
+      C-M-v/<ESC> C-v - Scroll the other window.
+      C-x o - Move the cursor to the "other" window.
+      C-x 4 C-f <filename> - Open a file in the other window and move cursor there.
+      C-x 52 - Create a new frame (means window).
+      C-x 50 - Closes current frame.
+
+Getting Help:
+      C-h/F1/M-x help <Return> - Get help.
+      C-h c <command> - Shows you the function name, which are supposed to be descriptive.
+      C-h k <command> - Shows more information about the command.
+      C-h x <command> - Describe a command. You type in the name of the command.
+      C-h v <variable> - Displays the documentation of variables.
+      C-h a <keyword> - Command Apropos. Type in a keyword and Emacs will list all the commands whose names contain that keyword. These commands can be invoked with M-x.
+      C-h i - Read included Manuals (a.k.a. Info). This command puts you into a special buffer called "*info*" where you can read manuals for the packages installed on your system.
+            m <keyword> <Return> - (menu) search for keyword.
+            h - Info help.
+      C-h r - Go to Emacs help.
+      <command> C-h - Find help on the <command>. For example, C-x 8 C-h.
+
+      Emacs' help system is roughly divided into 3 parts:
+      - The Info Manual (M-x info/C-h i): Ref = info-shortcuts.png
+            C-h F <command> - Emacs will jump to the correct place in the info manual where the command is described.
+      - Apropos (M-x apropos-command/C-h a): when you're not entirely sure what you're lookin' for. Example, C-h a word$.
+            Commands:
+                  - M-x apropos = The thermonuclear option. Display all symbols... variables, commands, functions.
+                  - M-x apropos-command/C-h a = List only commands.
+                  - M-x apropos-documentation/C-h d = Searches just the documentation.
+                  - M-x apropos-library = Lists all variables and functions defined in a library. Useful when installing a new mode or package as it lists all the functions and variables defined in it.
+                  - M-x apropos-user-option = Shows user options available through the Customize Interface. This is one way to get the symbol names of Customize options.
+                  - M-x apropos-value = Searches all symbols with a particular value.
+      - Describe: When you know what you're looking for.
+            Commands:
+                  - M-x describe-mode/C-h m = Displays the documentation for the major mode (and any minor modes also enabled) along with any keybindings introduced by said modes. The describe command looks at your current buffer.
+                  - M-x describe-function/C-h f = Gives you the elisp function signature.
+                  - M-x describe-variable/C-h v = Read up on what a variable does.
+                  - M-x describe-key/C-h k = Describes what a key binding does. Remember that some keys come from major and minor modes and are not global. Therefore, you may get a different answer depending on the buffer in which you type the command.
+
+Customize:
+      M-x customize - Open the customize interface.
+      M-x customize-<what> - Example, M-x customize-themes
+
+Restarting Emacs:
+      M-x eval-buffer - Evaluate the entire buffer you're in.
+      M-x eval-region - Evaluates the region you have marked.
+      *Some things won't be re-evaluated.
+
+Escape:
+      C-x C-c - End emacs.
+      <ESC> <ESC> <ESC> - All purpose escape command. (When C-g doesn't work.)
+
+Set as default editor:
+      Create a script that start emacs with -nw flag:
+    	#!/bin/sh
+    	emacs -nw "$@"
+
+--------------------------------------------------------------------------
+Theory
+
+Terminology:
+      1. Key, Complete Key, Prefix Key, Invalid Key
+            Key = A sequence of keyboard (or mouse) actions.
+            Complete Key = One or more keyboard sequences. Example: C-d.
+            Prefix Key = If the sequence of keys is not a complete key. Example: C-x.
+            Invalid Key = If the key sequence is not recognized by Emacs at all.
+
+      2. Universal Argument (C-u)
+            - Used to alternate states.
+            - C-u is a shorthand for the number 4.
+                  C-u <char> = 4 times <char>.
+                  C-u C-u <char> = 16 times <char>.
+                  C-u <num> <char>/C-<num> <char>/M-<num> <char>/C-M-<num> <char> = <num> times <char>.
+                  C-u <0-9>/C-<0-9>/M-<0-9>/C-M-<0-9> = Digit argument 0 to 9.
+                  C--/M--/C-M-- = Negative argument.
+                  M-d = Kills the word after point.
+
+                  M-- M-d = Kills the word before point. (You just have to hold M and press -d.)
+                  C-- M-d = <same> But you have to press C-- and then M-d.
+                        The first one maintains tempo.
+                        The second one breaks tempo.
+
+      3. Emacs init.el
+            Location: ~/.emacs.d/init.el
+
+      4. Viewing & installing packages.
+            a) Add this to your init.el:
+                  (setq package-archives
+                  '(("gnu" . "http://elpa.gnu.org/packages/")
+                  ("marmalade" . "http://marmalade-repo.org/packages/")
+                  ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+            b) M-x eval-buffer
+            c) M-x package-list-packages - List packages from the above 3 repositories.
+
+            M-x package-install <package name> - Shortcut to install if you know the package name.
