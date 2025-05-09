@@ -15,3 +15,22 @@ You can use `xinput` to float the input device under X.
 
 4. To re-enable the keyboard, execute the command `xinput reattach <id#> <master#>`, where `master` is that second 
    number we noted down. So if the number was `3`, you would do `xinput reattach 10 3`.
+
+## Custom mouse click sounds
+
+```shell
+
+#!/bin/sh
+
+expect -c '
+spawn xmacrorec2
+set timeout -1
+expect  "ButtonPress 1" {
+  system mpg321 '~/Desktop/mayasage/mouse-click-290204.mp3' &
+  exp_continue          } \
+ "ButtonPress 3" {
+  system mpg321 '~/Desktop/mayasage/mouse-click-290204.mp3' &
+  exp_continue        }
+'
+
+```
